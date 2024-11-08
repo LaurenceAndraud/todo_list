@@ -1,0 +1,17 @@
+<h1>Liste des projets</h1>
+
+<ul>
+    {% for project in projects %}
+        <li>
+            <h2>{{ project.name }}</h2>
+            <p>{{ project.description }}</p>
+            <ul>
+                {% for task in project.tasks_list %}
+                    <li>{{ task.name }} - {{ task.description }}</li>
+                {% empty %}
+                    <li>Aucune tâche pour ce projet.</li>
+                {% endfor %}
+            </ul>
+        </li>
+    {% endfor %}
+</ul>

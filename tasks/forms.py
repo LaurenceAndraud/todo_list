@@ -9,9 +9,13 @@ class ProjectForm(forms.ModelForm):
 class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
-        fields = ['title', 'description', 'status', 'priority', 'due_date']
+        fields = ['name', 'description', 'status', 'priority', 'due_date']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['project'].widget.attrs['readonly'] = True
 
 class SubTaskForm(forms.ModelForm):
     class Meta:
         model = SubTask
-        fields = ['title', 'is_complete']
+        fields = ['name', 'is_complete']

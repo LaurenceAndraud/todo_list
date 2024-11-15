@@ -18,19 +18,20 @@ class Task(models.Model):
     ]
 
     project = models.ForeignKey(Project, related_name='tasks', on_delete=models.CASCADE)
-    title = models.CharField(max_length=200)
+    name = models.CharField(max_length=200, default="Default Title")
+    title = models.CharField(max_length=200, default="Default Title")
     description = models.TextField(blank=True, null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='todo')
     priority = models.PositiveIntegerField(default=1)
     due_date = models.DateField(blank=True, null=True)
 
     def __str__(self):
-        return self.title
+        return self.name
 
 class SubTask(models.Model):
     task = models.ForeignKey(Task, related_name='subtasks', on_delete=models.CASCADE)
-    title = models.CharField(max_length=200)
+    name = models.CharField(max_length=200)
     is_complete = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.title
+        return self.name

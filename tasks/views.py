@@ -29,7 +29,7 @@ class ProjectCreateView(CreateView):
 class TaskCreateView(CreateView):
     model = Task
     form_class = TaskForm
-    template_name = 'tasks/task_form.html'
+    template_name = 'tasks/project_form.html'
 
     def form_valid(self, form):
         form.instance.project_id = self.kwargs['pk']

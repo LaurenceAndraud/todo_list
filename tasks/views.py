@@ -3,7 +3,7 @@ from django.urls import reverse_lazy
 from .models import Project, Task, SubTask
 from .forms import ProjectForm, TaskForm, SubTaskForm
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 
 def project_list(request):
     return HttpResponse("Bienvenue sur la to-do list !")
@@ -57,3 +57,22 @@ class ProjectDetailView(DetailView):
 class TaskDetailView(DetailView):
     model = Task
     template_name = 'tasks/task_detail.html'
+
+def add_task(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+    if request.method == "POST":
+        form = TaskForm(request.POST)
+        if form.is_valid():
+            task = form.save(commit=False)
+            task.project = project
+            task.save()
+            return redirect('project_detail', project_id=project.id) 
+    else:
+        form = TaskForm()
+    return render(request, 'tasks/add_task.html', {'form': form, 'project': project})
+
+def task_detail(request, task_id):
+    task = get_object_or_404(Task, id=task_id)
+    subtasks = task.subtasks.all()
+    return render(request, 'tasks/task_detail.html', {'task': task, 'subtasks': subtasks})
+

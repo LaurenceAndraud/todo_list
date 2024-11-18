@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Task Detail{% endblock %}
+
+{% block content %}
+<h2>{{ task.title }}</h2>
+<p>{{ task.description }}</p>
+
+{% if subtasks %}
+    <h3>Subtasks</h3>
+    <ul>
+        {% for subtask in subtasks %}
+            <li>{{ subtask.title }} - {{ subtask.status }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No subtasks available.</p>
+{% endif %}
+
+<a href="/tasks/">Back to all tasks</a>
+{% endblock %}
+

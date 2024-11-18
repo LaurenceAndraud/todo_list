@@ -10,5 +10,6 @@
     {% endfor %}
 </ul>
 
-<a href="{% url 'task_create' pk=project.id %}">Ajouter une tâche</a>
+<a href="{% url 'add_task' project.id %}">Ajouter une tâche</a>
+
 

@@ -6,7 +6,8 @@ from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 
 def project_list(request):
-    return HttpResponse("Bienvenue sur la to-do list !")
+    projects = Project.objects.all()  
+    return render(request, 'tasks/project_list.html', {'projects': projects})
 
 class ProjectListView(ListView):
     model = Project
@@ -29,10 +30,18 @@ class ProjectCreateView(CreateView):
 class TaskCreateView(CreateView):
     model = Task
     form_class = TaskForm
-    template_name = 'tasks/project_form.html'
+    template_name = 'tasks/add_task.html'
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        project = get_object_or_404(Project, pk=self.kwargs['pk'])
+        kwargs['initial'].update({'project': project})  
+        return kwargs
 
     def form_valid(self, form):
-        form.instance.project_id = self.kwargs['pk']
+        project = get_object_or_404(Project, pk=self.kwargs['pk']) 
+        form.instance.project = project
+        self.object = form.save() 
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -71,8 +80,39 @@ def add_task(request, project_id):
         form = TaskForm()
     return render(request, 'tasks/add_task.html', {'form': form, 'project': project})
 
+def edit_task(request, task_id):
+    task = get_object_or_404(Task, id=task_id)
+    if request.method == "POST":
+        form = TaskForm(request.POST, instance=task)
+        if form.is_valid():
+            form.save()
+            return redirect('task_detail', pk=task.id)
+    else:
+        form = TaskForm(instance=task)
+    return render(request, "tasks/edit_task.html", {'form': form, 'task': task})
+
 def task_detail(request, task_id):
     task = get_object_or_404(Task, id=task_id)
     subtasks = task.subtasks.all()
     return render(request, 'tasks/task_detail.html', {'task': task, 'subtasks': subtasks})
+
+def project_detail(request, pk):
+    project = get_object_or_404(Project, id=pk)
+    tasks = project.task_set.all()
+
+    if request.method == 'POST':
+        form = TaskForm(request.POST)
+        if form.is_valid():
+            task = form.save(commit=False)
+            task.project = project
+            task.save()
+            return redirect('project_detail', pk=project.id)
+    else:
+        form = TaskForm()
+
+    return render(request, 'tasks/project_detail.html', {
+        'project': project,
+        'tasks': tasks,
+        'form': form
+    })
 

@@ -1,15 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
 <h1>{{ project.name }}</h1>
 <p>{{ project.description }}</p>
 
 <h2>Tâches</h2>
 <ul>
-    {% for task in project.task_set.all %}
-        <li>{{ task.title }}</li>
-    {% empty %}
-        <li>Aucune tâche pour ce projet.</li>
+    {% for task in tasks %}
+        <li>{{ task.title }} - {{ task.description }}</li>
     {% endfor %}
 </ul>
 
-<a href="{% url 'add_task' project.id %}">Ajouter une tâche</a>
+<h3>Ajouter une tâche</h3>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Ajouter</button>
+</form>
+
+<a href="{% url 'home' %}">Retour à la liste des projets</a>
+{% endblock %}
+
 
 

@@ -12,8 +12,10 @@ class TaskForm(forms.ModelForm):
         fields = ['name', 'description', 'status', 'priority', 'due_date']
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['project'].widget.attrs['readonly'] = True
+        project = kwargs.pop('project', None)
+        super(TaskForm, self).__init__(*args, **kwargs)
+        if project:
+            self.fields['name'].label = f"Tâche pour le projet : {project.name}"
 
 class SubTaskForm(forms.ModelForm):
     class Meta:
